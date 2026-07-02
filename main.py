@@ -64,8 +64,8 @@ def cli_main():
         title = result["title"] or "video"
         filepath = str(result["filepath"]) or "?"
         print(f"\n[OK] Descarga exitosa!")
-        print(f"  Titulo: {title}")
-        print(f"  Archivo: {filepath}")
+        safe_print(f"  Titulo: {title}")
+        safe_print(f"  Archivo: {filepath}")
         return 0
     else:
         print(f"\n[ERROR] {dl.last_error}")

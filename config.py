@@ -16,13 +16,15 @@ DEFAULT_OUTPUT_DIR = Path.home() / "Downloads" / "YouTube"
 DEFAULT_QUALITY = "480p"
 
 # Mapa de formatos por calidad
+# Prioridad: bestvideo+bestaudio para garantizar merge correcto con ffmpeg
+# Format 18 = 360p single-stream (fallback universal)
 QUALITY_MAP = {
     "2160p": "bestvideo[height<=2160][ext=mp4]+bestaudio[ext=m4a]/bestvideo[height<=2160]+bestaudio/best",
     "1440p": "bestvideo[height<=1440][ext=mp4]+bestaudio[ext=m4a]/bestvideo[height<=1440]+bestaudio/best",
     "1080p": "bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]/bestvideo[height<=1080]+bestaudio/best",
     "720p":  "bestvideo[height<=720][ext=mp4]+bestaudio[ext=m4a]/bestvideo[height<=720]+bestaudio/best",
     "480p":  "bestvideo[height<=480][ext=mp4]+bestaudio[ext=m4a]/bestvideo[height<=480]+bestaudio/best",
-    "360p":  "bestvideo[height<=360][ext=mp4]+bestaudio[ext=m4a]/bestvideo[height<=360]+bestaudio/best",
+    "360p":  "18/best[height<=360][ext=mp4]/best",
     "audio": "bestaudio[ext=m4a]/bestaudio",
 }
 

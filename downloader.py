@@ -1,3 +1,6 @@
+import json
+import os
+import subprocess
 import yt_dlp
 from pathlib import Path
 from typing import Optional, Dict, Any, Callable
@@ -16,6 +19,44 @@ class YouTubeDownloader:
         self.quality = quality
         self.progress_hook = progress_hook
         self.last_error = None
+
+    @staticmethod
+    def _verify_file(filepath: str) -> Dict[str, Any]:
+        """Verifica que el archivo MP4 tenga video y audio usando ffprobe."""
+        result = {"valid": False, "has_video": False, "has_audio": False, "error": None}
+        ffmpeg_bin = None
+        for p in os.environ.get("PATH", "").split(";"):
+            probe = os.path.join(p, "ffprobe.exe")
+            if os.path.isfile(probe):
+                ffmpeg_bin = p
+                break
+
+        if not ffmpeg_bin:
+            result["error"] = "ffprobe no encontrado en PATH"
+            return result
+
+        ffprobe = os.path.join(ffmpeg_bin, "ffprobe.exe")
+        try:
+            proc = subprocess.run(
+                [ffprobe, "-v", "quiet", "-show_streams", "-print_format", "json", filepath],
+                capture_output=True, text=True, timeout=30,
+            )
+            probe = json.loads(proc.stdout)
+            streams = probe.get("streams", [])
+            result["has_video"] = any(s.get("codec_type") == "video" for s in streams)
+            result["has_audio"] = any(s.get("codec_type") == "audio" for s in streams)
+            result["valid"] = result["has_video"] and result["has_audio"]
+            if not result["valid"]:
+                missing = []
+                if not result["has_video"]:
+                    missing.append("video")
+                if not result["has_audio"]:
+                    missing.append("audio")
+                result["error"] = f"Archivo sin {' y '.join(missing)}"
+        except (subprocess.TimeoutExpired, json.JSONDecodeError, FileNotFoundError) as e:
+            result["error"] = str(e)
+
+        return result
 
     def _build_opts(self, audio_only: bool = False) -> dict:
         """Construye las opciones de yt-dlp."""
@@ -48,11 +89,6 @@ class YouTubeDownloader:
                 "preferredcodec": "m4a",
                 "preferredquality": "192",
             }]
-        else:
-            opts["postprocessors"] = [{
-                "key": "FFmpegVideoConvertor",
-                "preferedformat": "mp4",
-            }]
 
         return opts
 
@@ -69,12 +105,26 @@ class YouTubeDownloader:
             with yt_dlp.YoutubeDL(opts) as ydl:
                 info = ydl.extract_info(url, download=True)
                 if info:
-                    return {
+                    filepath = ydl.prepare_filename(info)
+                    # Check if merged to .mp4
+                    if not os.path.exists(filepath):
+                        filepath = filepath.rsplit(".", 1)[0] + ".mp4"
+
+                    result = {
                         "title": info.get("title"),
-                        "filepath": ydl.prepare_filename(info),
+                        "filepath": filepath,
                         "duration": info.get("duration"),
                         "uploader": info.get("uploader"),
                     }
+
+                    # Verify audio+video if not audio_only
+                    if not audio_only and os.path.isfile(filepath):
+                        verification = self._verify_file(filepath)
+                        if not verification["valid"]:
+                            self.last_error = verification.get("error", "Archivo invalido")
+                            return None
+
+                    return result
                 return None
         except yt_dlp.utils.DownloadError as e:
             self.last_error = f"Error de descarga: {e}"
