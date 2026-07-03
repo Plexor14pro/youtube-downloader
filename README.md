@@ -1,72 +1,70 @@
-# YouTube Downloader
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python"/>
+  <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-0078D4?style=for-the-badge" alt="Platform"/>
+  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License"/>
+</p>
 
-Descargador de videos de YouTube con interfaz grafica (GUI) y linea de comandos (CLI). Escrito en Python con `yt-dlp`.
+<h1 align="center">YouTube Downloader</h1>
 
-## Caracteristicas
+<p align="center">
+  Download YouTube videos with a clean GUI or via CLI. Built in Python.
+</p>
 
-- Interfaz grafica intuitiva con Tkinter
-- Descarga videos en MP4 con calidad seleccionable (2160p a 360p)
-- Solo audio (M4A)
-- Barra de progreso en tiempo real
-- Compatible con Windows, Linux y macOS
+---
 
-## Instalacion
+### About
+
+A lightweight desktop application that allows you to download YouTube videos quickly. Supports both a graphical interface (Tkinter) and a command-line interface for power users.
+
+### Features
+
+- Download videos in multiple resolutions
+- GUI interface for easy use
+- CLI mode for automation
+- Progress tracking
+- Cross-platform (Windows, Linux, macOS)
+
+### Tech Stack
+
+- **Python 3.x**
+- **Tkinter** — GUI framework
+- **yt-dlp** — Video extraction
+
+### Installation
 
 ```bash
+# Clone the repository
 git clone https://github.com/Plexor14pro/youtube-downloader.git
+
+# Navigate to the directory
 cd youtube-downloader
+
+# Install dependencies
 pip install -r requirements.txt
+
+# Run the application
+python main.py
 ```
 
-### Requisitos
+### Usage
 
-- **Python 3.8+**
-- **FFmpeg** - Para fusionar video y audio
-- **Deno** (opcional) - Para resolver challenges JS de YouTube
-
-## Uso
-
-### Interfaz grafica (GUI)
-
+**GUI Mode:**
 ```bash
 python main.py
 ```
 
-### Linea de comandos (CLI)
-
+**CLI Mode:**
 ```bash
-python main.py "https://youtube.com/watch?v=VIDEO_ID"
-python main.py "https://youtube.com/watch?v=VIDEO_ID" -q 720p
-python main.py "https://youtube.com/watch?v=VIDEO_ID" -a
+python main.py --url "https://youtube.com/watch?v=..." --quality 720
 ```
 
-| Opcion | Descripcion |
-|--------|-------------|
-| `-q` | Calidad: 2160p, 1440p, 1080p, 720p, 480p, 360p, audio |
-| `-a` | Solo audio (M4A) |
-| `-o` | Carpeta de salida |
+### Roadmap
 
-## Screenshot
+- [ ] Playlist download support
+- [ ] Audio-only extraction
+- [ ] Download queue
+- [ ] Quality selection menu
 
-```
-+------------------------------------------+
-|         YouTube Downloader               |
-|                                          |
-|  URL: [________________________]         |
-|  Calidad: [480p v]   [ ] Solo audio     |
-|  Guardar en: [~/Downloads/YouTube] [Browse]|
-|                                          |
-|  [======== DESCARGAR ===========]        |
-|  [####################--------] 78.3%   |
-|                                          |
-|  [OK] Mi video favorito                  |
-+------------------------------------------+
-```
+### License
 
-## Licencia
-
-MIT License
-
-## Creado por
-
-Desarrollado por **@panarabe14** en X (Twitter).
+Distributed under the MIT License. See `LICENSE` for more information.
